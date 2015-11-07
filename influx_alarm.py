@@ -93,8 +93,6 @@ def main():
     else:
         proxies = None
 
-    print(config)
-
     client = influxdb.InfluxDBClient(host=config["host"],
                                      port=config["port"],
                                      username=config["username"],
@@ -106,19 +104,23 @@ def main():
 
     validate_db(client)
 
-    for count in range(1, 30*60*24*2):
+    _co2 = "select last(value) as last_co2 from co2 WHERE time > now() - 10m"
 
-        _co2 = "select value from co2 where office='r1.108' order by time desc limit 1"
-        print(client.query(_co2))
+    for item in client.query(_co2):
+        print(item)
+        _dict = item
 
-        rand_tmp = random.randint(-5, 15)*2
-        rand_co2 = rand_tmp * random.randint(3, 9) * 10
-        print(str(count) + ": " + str(rand_tmp) + ", " + str(rand_co2))
+    last_co2 = int(_dict[0][u'last_co2'])
 
-        dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
-        client.write_points(dataset)
+    _tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 10m"
 
-        time.sleep(2)
+    for item in client.query(_tmp):
+        print(item)
+        _dict = item
+
+    last_tmp = int(_dict[0][u'last_tmp'])
+
+    print("Last Temp: " + str(last_tmp) + " last CO2: " + str(last_co2))
 
 if __name__ == "__main__":
     main()
