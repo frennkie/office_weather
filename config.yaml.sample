@@ -1,4 +1,14 @@
 ---
-prefix: office.floor4.kitchen
-user: foo@bar.com
-token: 'sometoken'
+host: sys.denm.de
+port: 8086
+ssl: yes
+verify_ssl: yes
+username: robbie
+password: 123456
+---
+sensor: eike-pi1
+office: r1.108
+# http(s) proxy config
+use_proxy: yes # [yes|no]
+http_proxy_config: "http://foo:bar@sys.denm.de:3128"
+https_proxy_config: "http://foo:bar@sys.denm.de:3128"
