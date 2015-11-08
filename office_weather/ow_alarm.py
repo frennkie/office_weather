@@ -105,40 +105,24 @@ def main():
     validate_db(client)
 
     _co2 = "select last(value) as last_co2 from co2 WHERE time > now() - 1d"
-
     if _co2:
         for item in client.query(_co2):
             _dict = item
-
         last_co2 = int(_dict[0][u'last_co2'])
 
     _tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 1d"
-
     if _tmp:
         for item in client.query(_tmp):
             _dict = item
-
         last_tmp = int(_dict[0][u'last_tmp'])
-
 
     print("Last Temp: " + str(last_tmp) + " last CO2: " + str(last_co2))
 
     # it above limit play audo message
     if last_co2 > CO2_LIMIT:
-        mesg = "Achtung: C O 2 liegt zu hoch bei " + str(last_co2)
+        mesg = "Achtung: Der aktuelle C O 2 Wert beträgt " + str(last_co2)
         print(mesg)
         audio.play_tts(mesg, lang="de-DE")
-
-        """
-        script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
-        s_file = audio.get_random_sound_file(script_base_dir + "sounds")
-
-        if s_file:
-            print("Play file: " + s_file)
-            audio.play_sound_file(s_file)
-        else:
-            print("No files to play :-/")
-        """
 
 if __name__ == "__main__":
     main()
