@@ -23,6 +23,9 @@ import random
 import pygame
 import subprocess
 
+import requests
+requests.packages.urllib3.disable_warnings()
+
 import audio
 
 DATABASE_NAME = "climate"

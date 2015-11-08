@@ -18,7 +18,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 DATABASE_NAME = "climate"
-CO2_LIMIT = 1200
+CO2_LIMIT = 1400
 
 def get_config(config_file=None):
     """Get config from file; if no config_file is passed in as argument
