@@ -1,0 +1,15 @@
+---
+# influxdb
+host: influx.example.com
+port: 8086
+ssl: yes
+verify_ssl: yes
+username: username
+password: password
+# tags for sensor and office
+sensor: raspberry
+office: main-floor
+# http(s) proxy config
+use_proxy: no # [yes|no]
+http_proxy_config: "http://username:password@proxy.example.com:3128"
+https_proxy_config: "http://username:password@proxy.example.com:3128"

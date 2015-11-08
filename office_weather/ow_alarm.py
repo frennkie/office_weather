@@ -5,6 +5,7 @@ import os
 import sys
 
 import pygame
+import subprocess
 import random
 
 import influxdb
@@ -77,15 +78,6 @@ def validate_db(_client):
 
     return True
 
-def play_sound_file(sound_file_abs_path):
-    """play sound from wav file"""
-
-    pygame.mixer.init()
-    pygame.mixer.music.load(sound_file_abs_path)
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() == True:
-        continue
-
 def get_random_sound_file(sounds_dir):
     """get a random filename from given (absolute) path dir"""
 
@@ -101,6 +93,23 @@ def get_random_sound_file(sounds_dir):
         return sound_files[random.randint(0, len(sound_files)-1)]
     else:
         return False
+
+def play_sound_file(sound_file_abs_path):
+    """play sound from wav file"""
+
+    pygame.mixer.init()
+    pygame.mixer.music.load(sound_file_abs_path)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
+
+def play_tts(words):
+    tempfile = "/tmp/temp.wav"
+    devnull = open("/dev/null","w")
+    subprocess.call(["pico2wave", "-w", tempfile, words],stderr=devnull)
+    subprocess.call(["aplay", tempfile],stderr=devnull)
+    os.remove(tempfile)
+
 
 def main():
     """main"""
