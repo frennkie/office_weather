@@ -20,6 +20,9 @@ import yaml
 import socket
 import influxdb
 
+import requests
+requests.packages.urllib3.disable_warnings()
+
 #import random
 
 DATABASE_NAME = "climate"
