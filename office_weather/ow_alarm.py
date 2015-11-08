@@ -14,6 +14,9 @@ import yaml
 
 import audio
 
+import requests
+requests.packages.urllib3.disable_warnings()
+
 DATABASE_NAME = "climate"
 CO2_LIMIT = 1200
 
