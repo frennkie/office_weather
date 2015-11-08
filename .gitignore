@@ -1,3 +1,7 @@
+*.pyc
+*.pyo
+*.tmp
+*.log
 config.yaml
 influxdb/
 venv/
