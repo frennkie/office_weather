@@ -175,7 +175,7 @@ def main():
 
         mesg = "Messung " + str(count) + ": Es sind " + str(rand_tmp) + " Grad und C O 2 liegt bei " + str(rand_co2) + "."
         print(mesg)
-        play_tts(mesg, lang="de-DE")
+        #play_tts(mesg, lang="de-DE")
 
         dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
         client.write_points(dataset)
