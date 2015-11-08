@@ -15,6 +15,7 @@ import yaml
 import audio
 
 DATABASE_NAME = "climate"
+CO2_LIMIT = 1200
 
 def get_config(config_file=None):
     """Get config from file; if no config_file is passed in as argument
@@ -122,8 +123,13 @@ def main():
 
     print("Last Temp: " + str(last_tmp) + " last CO2: " + str(last_co2))
 
-    # play a sound anyway! :-)
-    if last_co2 > 1200:
+    # it above limit play audo message
+    if last_co2 > CO2_LIMIT:
+        mesg = "Achtung: C O 2 liegt zu hoch bei " + str(last_co2)
+        print(mesg)
+        audio.play_tts(mesg, lang="de-DE")
+
+        """
         script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
         s_file = audio.get_random_sound_file(script_base_dir + "sounds")
 
@@ -132,10 +138,7 @@ def main():
             audio.play_sound_file(s_file)
         else:
             print("No files to play :-/")
-
-        mesg = "Achtung: Es sind " + str(last_tmp) + " Grad und C O 2 liegt zu hoch bei " + str(last_co2)
-        print(mesg)
-        audio.play_tts(mesg, lang="de-DE")
+        """
 
 if __name__ == "__main__":
     main()
