@@ -1,19 +1,16 @@
-#!/usr/bin/env python
-"""
-based on code by henryk ploetz
-https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/log/17909-all-your-base-are-belong-to-us
-
-"""
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 import os
 import sys
-import fcntl
-import time
-import yaml
+
+import pygame
+import random
+
 import influxdb
 
-import random
+import yaml
+
 
 DATABASE_NAME = "climate"
 
@@ -80,6 +77,31 @@ def validate_db(_client):
 
     return True
 
+def play_sound_file(sound_file_abs_path):
+    """play sound from wav file"""
+
+    pygame.mixer.init()
+    pygame.mixer.music.load(sound_file_abs_path)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
+
+def get_random_sound_file(sounds_dir):
+    """get a random filename from given (absolute) path dir"""
+
+    sound_files = []
+
+    files = [f for f in os.listdir(sounds_dir) if os.path.isfile(sounds_dir + "/" + f)]
+
+    for filen in files:
+        if filen.lower().endswith("wav") or filen.lower().endswith("mp3"):
+            sound_files.append(os.path.abspath(sounds_dir + "/" + filen))
+
+    if sound_files:
+        return sound_files[random.randint(0, len(sound_files)-1)]
+    else:
+        return False
+
 def main():
     """main"""
     config = get_config()
@@ -104,23 +126,37 @@ def main():
 
     validate_db(client)
 
-    _co2 = "select last(value) as last_co2 from co2 WHERE time > now() - 10m"
+    _co2 = "select last(value) as last_co2 from co2 WHERE time > now() - 1d"
 
-    for item in client.query(_co2):
-        print(item)
-        _dict = item
+    if _co2:
+        for item in client.query(_co2):
+            _dict = item
 
-    last_co2 = int(_dict[0][u'last_co2'])
+        last_co2 = int(_dict[0][u'last_co2'])
+        print(last_co2)
 
-    _tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 10m"
+    _tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 1d"
 
-    for item in client.query(_tmp):
-        print(item)
-        _dict = item
+    if _tmp:
+        for item in client.query(_tmp):
+            _dict = item
 
-    last_tmp = int(_dict[0][u'last_tmp'])
+        last_tmp = int(_dict[0][u'last_tmp'])
+
 
     print("Last Temp: " + str(last_tmp) + " last CO2: " + str(last_co2))
 
+    # play a sound anyway! :-)
+    if last_co2 is None or last_co2 is not None:
+        script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
+        s_file = get_random_sound_file(script_base_dir + "sounds")
+
+        if s_file:
+            print("Play file: " + s_file)
+            play_sound_file(s_file)
+        else:
+            print("No files to play :-/")
+
 if __name__ == "__main__":
     main()
+

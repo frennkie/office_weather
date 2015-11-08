@@ -18,6 +18,10 @@ vary in temperature and Co2 across the floors.
 
 ## software
 
+
+python-pygame
+
+
 1) [Librato](https://www.librato.com) account for posting the data to.
 
 2) download [Raspbian](https://www.raspberrypi.org/downloads/) and [install it on the microSD](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used [this version](https://github.com/wooga/office_weather/blob/0da94b4255494ecbcf993ec592988503c6c72629/.gitignore#L2) of raspbian.
