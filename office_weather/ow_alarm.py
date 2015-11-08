@@ -110,7 +110,6 @@ def main():
             _dict = item
 
         last_co2 = int(_dict[0][u'last_co2'])
-        print(last_co2)
 
     _tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 1d"
 
@@ -124,7 +123,7 @@ def main():
     print("Last Temp: " + str(last_tmp) + " last CO2: " + str(last_co2))
 
     # play a sound anyway! :-)
-    if last_co2 is None or last_co2 is not None:
+    if last_co2 > 1200:
         script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
         s_file = audio.get_random_sound_file(script_base_dir + "sounds")
 
