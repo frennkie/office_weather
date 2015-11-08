@@ -12,6 +12,7 @@ import influxdb
 
 import yaml
 
+import audio
 
 DATABASE_NAME = "climate"
 
@@ -78,38 +79,6 @@ def validate_db(_client):
 
     return True
 
-def get_random_sound_file(sounds_dir):
-    """get a random filename from given (absolute) path dir"""
-
-    sound_files = []
-
-    files = [f for f in os.listdir(sounds_dir) if os.path.isfile(sounds_dir + "/" + f)]
-
-    for filen in files:
-        if filen.lower().endswith("wav") or filen.lower().endswith("mp3"):
-            sound_files.append(os.path.abspath(sounds_dir + "/" + filen))
-
-    if sound_files:
-        return sound_files[random.randint(0, len(sound_files)-1)]
-    else:
-        return False
-
-def play_sound_file(sound_file_abs_path):
-    """play sound from wav file"""
-
-    pygame.mixer.init()
-    pygame.mixer.music.load(sound_file_abs_path)
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() == True:
-        continue
-
-def play_tts(words, lang="en-US"):
-    tempfile = "/tmp/temp.wav"
-    devnull = open("/dev/null","w")
-    subprocess.call(["pico2wave", "-l", lang, "-w", tempfile, words],stderr=devnull)
-    subprocess.call(["aplay", tempfile],stderr=devnull)
-    os.remove(tempfile)
-
 def main():
     """main"""
     config = get_config()
@@ -157,17 +126,17 @@ def main():
     # play a sound anyway! :-)
     if last_co2 is None or last_co2 is not None:
         script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
-        s_file = get_random_sound_file(script_base_dir + "sounds")
+        s_file = audio.get_random_sound_file(script_base_dir + "sounds")
 
         if s_file:
             print("Play file: " + s_file)
-            play_sound_file(s_file)
+            audio.play_sound_file(s_file)
         else:
             print("No files to play :-/")
 
         mesg = "Achtung: Es sind " + str(last_tmp) + " Grad und C O 2 liegt zu hoch bei " + str(last_co2)
         print(mesg)
-        play_tts(mesg, lang="de-DE")
+        audio.play_tts(mesg, lang="de-DE")
 
 if __name__ == "__main__":
     main()

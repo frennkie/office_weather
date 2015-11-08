@@ -23,6 +23,7 @@ import random
 import pygame
 import subprocess
 
+import audio
 
 DATABASE_NAME = "climate"
 
@@ -121,13 +122,6 @@ def create_dataset(_config, tmp=None, co2=None):
 
     return json_body
 
-def play_tts(words, lang="en-US"):
-    tempfile = "/tmp/temp.wav"
-    devnull = open("/dev/null","w")
-    subprocess.call(["pico2wave", "-l", lang, "-w", tempfile, words],stderr=devnull)
-    subprocess.call(["aplay", tempfile],stderr=devnull)
-    os.remove(tempfile)
-
 def main():
     """main"""
 
@@ -175,7 +169,7 @@ def main():
 
         mesg = "Messung " + str(count) + ": Es sind " + str(rand_tmp) + " Grad und C O 2 liegt bei " + str(rand_co2) + "."
         print(mesg)
-        #play_tts(mesg, lang="de-DE")
+        #audio.play_tts(mesg, lang="de-DE")
 
         dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
         client.write_points(dataset)
