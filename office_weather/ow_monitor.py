@@ -152,7 +152,7 @@ def main():
                                      password=config["password"],
                                      database=DATABASE_NAME,
                                      ssl=config["ssl"],
-                                     proxies=proxies,
+                                     #proxies=proxies,
                                      verify_ssl=config["verify_ssl"])
 
     validate_db(client)
