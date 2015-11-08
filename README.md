@@ -21,6 +21,8 @@ vary in temperature and Co2 across the floors.
 
 python-pygame
 
+python-pip
+
 
 1) [Librato](https://www.librato.com) account for posting the data to.
 
@@ -32,19 +34,25 @@ python-pygame
 
 1) install python libs
 ```
-sudo apt-get install python-pip
-sudo pip install librato-metrics
-sudo pip install pyyaml
+sudo apt-get install python-pip python-pygame
+sudo pip install -U pip
+sudo pip install -U -r requirements.txt
 ```
 
-2) create `config.yaml` with [libratro](https://www.librato.com) credentials:
+2) create copy of example config  `cp config.yaml.sample config.yaml`
 ```
-user: your.librato.user.name@some.email.com
-token: abc123...
-prefix: office.floor3
+# influxdb
+host: influx.example.com
+port: 8086
+ssl: yes
+verify_ssl: yes
+username: username
+password: password
+# tags for sensor and office
+sensor: raspberry
+office: main-floor
 ```
 
-We use [librato](https://www.librato.com) to graph our weather, so you'll need to modify that if you using another service.
 
 3) fix socket permissions
 ```
@@ -53,7 +61,7 @@ sudo chmod a+rw /dev/hidraw0
 
 4) run the script
 ```
-./monitor.py /dev/hidraw0
+./ow_monitor.py /dev/hidraw0
 ```
 
 5) run on startup
@@ -72,7 +80,7 @@ Pi:
 
 ```
 SHELL=/bin/bash
-* * * * * /usr/bin/python /home/pi/monitor.py /dev/hidraw0 [ **optional:** /home/pi/my_config.yaml ]  > /dev/null 2>&1
+* * * * * /usr/bin/python /home/pi/ow_monitor.py /dev/hidraw0 [ **optional:** /home/pi/my_config.yaml ]  > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the

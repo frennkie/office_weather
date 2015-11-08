@@ -103,13 +103,12 @@ def play_sound_file(sound_file_abs_path):
     while pygame.mixer.music.get_busy() == True:
         continue
 
-def play_tts(words):
+def play_tts(words, lang="en-US"):
     tempfile = "/tmp/temp.wav"
     devnull = open("/dev/null","w")
-    subprocess.call(["pico2wave", "-w", tempfile, words],stderr=devnull)
+    subprocess.call(["pico2wave", "-l", lang, "-w", tempfile, words],stderr=devnull)
     subprocess.call(["aplay", tempfile],stderr=devnull)
     os.remove(tempfile)
-
 
 def main():
     """main"""
@@ -130,7 +129,7 @@ def main():
                                      password=config["password"],
                                      database=DATABASE_NAME,
                                      ssl=config["ssl"],
-                                     proxies=proxies,
+                                     #proxies=proxies,
                                      verify_ssl=config["verify_ssl"])
 
     validate_db(client)
@@ -165,6 +164,10 @@ def main():
             play_sound_file(s_file)
         else:
             print("No files to play :-/")
+
+        mesg = "Achtung: Es sind " + str(last_tmp) + " Grad und C O 2 liegt zu hoch bei " + str(last_co2)
+        print(mesg)
+        play_tts(mesg, lang="de-DE")
 
 if __name__ == "__main__":
     main()
