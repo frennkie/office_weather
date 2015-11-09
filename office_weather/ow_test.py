@@ -14,58 +14,31 @@ https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/l
 from __future__ import print_function
 import os
 import sys
-import fcntl
 import time
 import yaml
 import socket
-import influxdb
+
 import random
 import pygame
 import subprocess
 
-import requests
-requests.packages.urllib3.disable_warnings()
-
 import audio
 from acm import AirControlMini
+from influxdb_proxies import InfluxDBClientProxies
+
 
 DATABASE_NAME = "climate"
 
-def decrypt(key,  data):
-    cstate = [0x48,  0x74,  0x65,  0x6D,  0x70,  0x39,  0x39,  0x65]
-    shuffle = [2, 4, 0, 7, 1, 6, 5, 3]
-
-    phase1 = [0] * 8
-    for i, o in enumerate(shuffle):
-        phase1[o] = data[i]
-
-    phase2 = [0] * 8
-    for i in range(8):
-        phase2[i] = phase1[i] ^ key[i]
-
-    phase3 = [0] * 8
-    for i in range(8):
-        phase3[i] = ( (phase2[i] >> 3) | (phase2[ (i-1+8)%8 ] << 5) ) & 0xff
-
-    ctmp = [0] * 8
-    for i in range(8):
-        ctmp[i] = ( (cstate[i] >> 4) | (cstate[i]<<4) ) & 0xff
-
-    out = [0] * 8
-    for i in range(8):
-        out[i] = (0x100 + phase3[i] - ctmp[i]) & 0xff
-
-    return out
-
-def hd(d):
-    return " ".join("%02X" % e for e in d)
-
-def now():
-    return int(time.time())
 
 def get_config(config_file=None):
-    """Get config from file; if no config_file is passed in as argument
-        default to "config.yaml" in script dir"""
+    """
+    Args:
+        config_file (str): name of config file, defaults to script dir + "config.yaml"
+
+    Return:
+        dict containing the config settings parsed from yaml
+
+    """
 
     if config_file is None:
         script_base_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + "/"
@@ -74,57 +47,10 @@ def get_config(config_file=None):
     with open(config_file, 'r') as stream:
         return yaml.load(stream)
 
-def validate_db(_client):
-    """Make sure the database exists"""
 
-    db_missing = True
-    try:
-        _client.query("show measurements")
-        db_missing = False
-    except influxdb.exceptions.InfluxDBClientError as err:
-        if "database not found" in str(err.content):
-            # db is missing.. we can handle that
-            pass
-        else:
-            print("An error occured: " + str(err.content))
-            sys.exit(1)
+def now():
+    return int(time.time())
 
-    if db_missing:
-        print("Creating non-existant database: " + DATABASE_NAME)
-        _client.create_database(DATABASE_NAME)
-
-    return True
-
-def create_dataset(_config, tmp=None, co2=None):
-    """create and return a json dataset ready to sent to API as POST"""
-
-    sensor = _config["sensor"]
-    office = _config["office"]
-
-    json_body = [
-        {
-            "measurement": "tmp",
-            "tags": {
-                "sensor": sensor,
-                "office": office
-            },
-            "fields": {
-                "value": tmp
-            }
-        },
-        {
-            "measurement": "co2",
-            "tags": {
-                "sensor": sensor,
-                "office": office
-            },
-            "fields": {
-                "value": co2
-            }
-        }
-    ]
-
-    return json_body
 
 def main():
     """main"""
@@ -133,10 +59,13 @@ def main():
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         ## Create an abstract socket, by prefixing it with null.
-        s.bind('\0postconnect_gateway_notify_lock')
-    except socket.error, e:
+        s.bind('\0ow_test_notify_lock')
+    except socket.error:
         # if script is already running just exit silently
         sys.exit(0)
+
+    devnull = open("/dev/null", "w")
+    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"], stderr=devnull)
 
     try:
         config = get_config(config_file=sys.argv[2])
@@ -152,16 +81,32 @@ def main():
     else:
         proxies = None
 
-    client = influxdb.InfluxDBClient(host=config["host"],
-                                     port=config["port"],
-                                     username=config["username"],
-                                     password=config["password"],
-                                     database=DATABASE_NAME,
-                                     ssl=config["ssl"],
-                                     #proxies=proxies,
-                                     verify_ssl=config["verify_ssl"])
+    client = InfluxDBClientProxies(host=config["host"],
+                                   port=config["port"],
+                                   username=config["username"],
+                                   password=config["password"],
+                                   database=DATABASE_NAME,
+                                   ssl=config["ssl"],
+                                   proxies=proxies,
+                                   verify_ssl=config["verify_ssl"])
 
-    validate_db(client)
+    client.validate_db()
+
+    acm = AirControlMini()
+
+    stamp = now()
+
+    for cur_co2, cur_tmp in acm.get_fake_values():
+
+        print("CO2: %4i TMP: %3.1f" % (cur_co2, cur_tmp))
+
+        if now() - stamp > 5:
+            print(">>>")
+
+            #dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
+            #client.write_points(dataset)
+
+            stamp = now()
 
     """
 
@@ -183,26 +128,6 @@ def main():
         time.sleep(10)
 
     """
-
-    acm = AirControlMini()
-
-    stamp = now()
-
-    for dct in acm.get_values():
-        #co2 = dct['co2']
-        #tmp = dct['tmp']
-        co2 = dct[0]
-        tmp = dct[1]
-
-        print("CO2: %4i TMP: %3.1f" % (co2, tmp))
-
-        if now() - stamp > 5:
-            print(">>>")
-
-            #dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
-            #client.write_points(dataset)
-
-            stamp = now()
 
 
 if __name__ == "__main__":

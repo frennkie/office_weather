@@ -8,7 +8,7 @@ import random
 class AirControlMini(object):
     """AirControlMini (acm) class"""
 
-    def __init__(self, device="/dev/hidraw0"):
+    def __init__(self, device=None):
         """
 
         Args:
@@ -16,7 +16,10 @@ class AirControlMini(object):
 
         """
 
-        self.device = device
+        if device:
+            self.device = device
+        else:
+            self.device = "/dev/hidraw0"
 
         self.key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
         self.fp = open(self.device, "a+b",  0)
@@ -27,6 +30,7 @@ class AirControlMini(object):
     @classmethod
     def auto_detect_sensor(cls):
         """automatically detect the device path of the sensor"""
+        """possibly raises an exception if unable to detect a sensor"""
         # TODO (frennkie): implement this
         return "/dev/hidraw0"
 

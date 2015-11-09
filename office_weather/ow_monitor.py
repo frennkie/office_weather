@@ -17,18 +17,13 @@ import sys
 import time
 import yaml
 import socket
-from influxdb_proxies import InfluxDBClientProxies
-
 import subprocess
 
 from acm import AirControlMini
+from influxdb_proxies import InfluxDBClientProxies
 
 
 DATABASE_NAME = "climate"
-
-
-def now():
-    return int(time.time())
 
 
 def get_config(config_file=None):
@@ -49,6 +44,10 @@ def get_config(config_file=None):
         return yaml.load(stream)
 
 
+def now():
+    return int(time.time())
+
+
 def main():
     """main"""
 
@@ -56,13 +55,13 @@ def main():
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         ## Create an abstract socket, by prefixing it with null.
-        s.bind('\0postconnect_gateway_notify_lock')
-    except socket.error, e:
+        s.bind('\0ow_monitor_lock')
+    except socket.error:
         # if script is already running just exit silently
         sys.exit(0)
 
-    devnull = open("/dev/null","w")
-    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"],stderr=devnull)
+    devnull = open("/dev/null", "w")
+    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"], stderr=devnull)
 
     try:
         config = get_config(config_file=sys.argv[2])
@@ -87,8 +86,10 @@ def main():
                                    proxies=proxies,
                                    verify_ssl=config["verify_ssl"])
 
-    client.validate_db(DATABASE_NAME)
+    client.validate_db()
 
+    # not implemented yet:
+    # acm = AirControlMini(device=AirControlMini.auto_detect_sensor())
     acm = AirControlMini()
 
     stamp = now()

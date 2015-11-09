@@ -12,22 +12,8 @@ from influxdb.exceptions import InfluxDBServerError
 import requests
 requests.packages.urllib3.disable_warnings()
 
-DATABASE_NAME = "climate"
-
 
 class InfluxDBClientProxies(InfluxDBClient):
-    """
-    def __init__(self, proxies=None, **kwargs):
-
-        self.proxies = proxies
-
-        if proxies is None:
-            self._proxies = {}
-        else:
-            self._proxies = proxies
-        # now call regular __init__
-        super(MyInfluxDBClient, self).__init__(kwargs)
-    """
     """The :class:`~.InfluxDBClient` object holds information necessary to
     connect to InfluxDB. Requests can be made to InfluxDB directly through
     the client.
@@ -168,11 +154,11 @@ class InfluxDBClientProxies(InfluxDBClient):
         else:
             raise InfluxDBClientError(response.content, response.status_code)
 
-    def validate_db(self, database_name=None):
+    def validate_db(self):
         """Make sure the database exists
 
         Args:
-            client (influxdb.InfluxDBClient)
+            client (InfluxDBClient)
 
         Returns:
             bool: True if successful, False otherwise.
@@ -192,8 +178,8 @@ class InfluxDBClientProxies(InfluxDBClient):
                 sys.exit(1)
 
         if db_missing:
-            print("Creating non-existent database: " + database_name)
-            self.create_database(database_name)
+            print("Creating non-existent database: " + self._database)
+            self.create_database(self._database)
 
         return True
 
@@ -222,22 +208,6 @@ class InfluxDBClientProxies(InfluxDBClient):
             json_body.append(dct)
 
         return json_body
-
-
-
-    """
-    client = InfluxDBClient(host=config["host"],
-                            port=config["port"],
-                            username=config["username"],
-                            password=config["password"],
-                            database=DATABASE_NAME,
-                            ssl=config["ssl"],
-                            proxies=proxies,
-                            verify_ssl=config["verify_ssl"])
-
-    validate_db(client)
-
-    """
 
 if __name__ == "__main__":
     pass
