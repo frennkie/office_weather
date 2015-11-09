@@ -27,7 +27,7 @@ class AirControlMini(object):
         while True:
             lst = list()
 
-            print("DEBUG: " + str(data)
+            print("DEBUG: " + str(data))
 
             data = list(ord(e) for e in self.fp.read(8))
             decrypted = self.decrypt(self.key, data)
