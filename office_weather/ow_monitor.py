@@ -140,7 +140,7 @@ def main():
 
 
     devnull = open("/dev/null","w")
-    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw1"],stderr=devnull)
+    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"],stderr=devnull)
 
     try:
         config = get_config(config_file=sys.argv[2])
