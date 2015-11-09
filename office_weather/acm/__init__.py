@@ -22,6 +22,8 @@ class AirControlMini(object):
     def get_values(self):
         """generator"""
 
+        values = {}
+
         while True:
             dct = {}
             lst = list()
