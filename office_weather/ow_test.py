@@ -12,20 +12,16 @@ https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/l
 """
 
 from __future__ import print_function
-import os
+
+import socket
+import subprocess
 import sys
 import time
+
+import os
 import yaml
-import socket
-
-import random
-import pygame
-import subprocess
-
-import audio
 from acm import AirControlMini
 from influxdb_proxies import InfluxDBClientProxies
-
 
 DATABASE_NAME = "climate"
 
@@ -109,7 +105,6 @@ def main():
             stamp = now()
 
     """
-
     for count in range(1, 30*60*24*2):
 
         #_co2 = "select value from co2 where office='r1.108' order by time desc limit 1"
