@@ -37,6 +37,7 @@ def play_tts(words, lang="en-US"):
 
     tempfile = "/tmp/.temp." + str(os.getpid()) + ".wav"
     devnull = open("/dev/null","w")
+    subprocess.call(["sudo", "/usr/bin/amixer", "cset", "numid=3", "1"],stderr=devnull)
     subprocess.call(["pico2wave", "-l", lang, "-w", tempfile, words],stderr=devnull)
     subprocess.call(["aplay", tempfile],stderr=devnull)
     os.remove(tempfile)

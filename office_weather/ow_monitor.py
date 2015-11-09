@@ -19,6 +19,7 @@ import time
 import yaml
 import socket
 import influxdb
+import subprocess
 
 import requests
 requests.packages.urllib3.disable_warnings()
@@ -136,6 +137,10 @@ def main():
     except socket.error, e:
         # if script is already running just exit silently
         sys.exit(0)
+
+
+    devnull = open("/dev/null","w")
+    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw1"],stderr=devnull)
 
     try:
         config = get_config(config_file=sys.argv[2])
