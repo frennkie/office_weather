@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import fcntl
 
 class AirControlMini(object):
     """AirControlMini (acm) class
