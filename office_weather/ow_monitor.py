@@ -23,6 +23,8 @@ import influxdb
 import requests
 requests.packages.urllib3.disable_warnings()
 
+from acm import AirControlMini
+
 #import random
 
 DATABASE_NAME = "climate"
