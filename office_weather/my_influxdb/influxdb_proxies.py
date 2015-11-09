@@ -157,9 +157,6 @@ class MyInfluxDBClient(InfluxDBClient):
     def validate_db(self):
         """Make sure the database exists
 
-        Args:
-            client (InfluxDBClient)
-
         Returns:
             bool: True if successful, False otherwise.
 
@@ -183,8 +180,8 @@ class MyInfluxDBClient(InfluxDBClient):
 
         return True
 
-    @classmethod
-    def create_dataset(cls, tags, **kwargs):
+    @staticmethod
+    def create_dataset(tags, **kwargs):
         """create and return a json dataset ready to sent to API as POST
 
         Args:
