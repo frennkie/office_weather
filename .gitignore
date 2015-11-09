@@ -2,6 +2,7 @@
 *.pyo
 *.tmp
 *.log
+try.py
 config.yaml
 influxdb/
 venv/
