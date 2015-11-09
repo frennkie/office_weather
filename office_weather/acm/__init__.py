@@ -27,7 +27,7 @@ class AirControlMini(object):
         while True:
             dct = {}
             lst = list()
-            data = self.read_data()
+            data = list(ord(e) for e in self.fp.read(8))
             decrypted = self.decrypt(self.key, data)
             if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:
                 print(self.hd(data), " => ", self.hd(decrypted),  "Checksum error")
@@ -40,6 +40,8 @@ class AirControlMini(object):
                     co2 = values[0x50]
                     tmp = (values[0x42]/16.0-273.15)
 
+                    print("CO2: %4i TMP: %3.1f" % (co2, tmp))
+
                     dct['co2'] = co2
                     dct['tmp'] = tmp
 
@@ -48,9 +50,6 @@ class AirControlMini(object):
 
                     #yield dct
                     yield lst
-
-    def read_data(self):
-        return list(ord(e) for e in self.fp.read(8))
 
     def decrypt(self, key, data):
         cstate = [0x48,  0x74,  0x65,  0x6D,  0x70,  0x39,  0x39,  0x65]
