@@ -41,7 +41,6 @@ def main():
     config = get_config()
 
     if config["use_proxy"]:
-        print("using proxy")
         proxies = {
                 "http": config["http_proxy_config"],
                 "https": config["https_proxy_config"]
@@ -66,7 +65,7 @@ def main():
             _dict = item
         last_co2 = int(_dict[0][u'last_co2'])
 
-    qry_tmp = "select last(value) as last_tmp from tmp  WHERE time > now() - 1d"
+    qry_tmp = "select last(value) as last_tmp from tmp WHERE time > now() - 1d"
     if qry_tmp:
         for item in client.query(qry_tmp):
             _dict = item

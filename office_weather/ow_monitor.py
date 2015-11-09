@@ -60,6 +60,11 @@ def main():
         # if script is already running just exit silently
         sys.exit(0)
 
+    # not implemented yet:
+    # my_sensor = AirControlMini.auto_detect_sensor()
+    # acm = AirControlMini(device=my_sensor)
+    acm = AirControlMini()
+
     devnull = open("/dev/null", "w")
     subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"], stderr=devnull)
 
@@ -87,10 +92,6 @@ def main():
                                    verify_ssl=config["verify_ssl"])
 
     client.validate_db()
-
-    # not implemented yet:
-    # acm = AirControlMini(device=AirControlMini.auto_detect_sensor())
-    acm = AirControlMini()
 
     stamp = now()
 
