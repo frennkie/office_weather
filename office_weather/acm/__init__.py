@@ -27,7 +27,8 @@ class AirControlMini(object):
         while True:
             dct = {}
             lst = list()
-            decrypted = self.decrypt(self.key, self.read_data())
+            data = self.read_data()
+            decrypted = self.decrypt(self.key, data)
             if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:
                 print(self.hd(data), " => ", self.hd(decrypted),  "Checksum error")
             else:
