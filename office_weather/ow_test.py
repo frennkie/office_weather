@@ -21,7 +21,7 @@ import time
 import os
 import yaml
 from acm import AirControlMini
-from influxdb_proxies import InfluxDBClientProxies
+from my_influxdb import MyInfluxDBClient
 
 DATABASE_NAME = "climate"
 
@@ -82,14 +82,14 @@ def main():
     else:
         proxies = None
 
-    client = InfluxDBClientProxies(host=config["host"],
-                                   port=config["port"],
-                                   username=config["username"],
-                                   password=config["password"],
-                                   database=DATABASE_NAME,
-                                   ssl=config["ssl"],
-                                   proxies=proxies,
-                                   verify_ssl=config["verify_ssl"])
+    client = MyInfluxDBClient(host=config["host"],
+                              port=config["port"],
+                              username=config["username"],
+                              password=config["password"],
+                              database=DATABASE_NAME,
+                              ssl=config["ssl"],
+                              proxies=proxies,
+                              verify_ssl=config["verify_ssl"])
 
     client.validate_db()
 

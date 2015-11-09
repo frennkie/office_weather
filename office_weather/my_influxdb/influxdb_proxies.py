@@ -13,7 +13,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 
-class InfluxDBClientProxies(InfluxDBClient):
+class MyInfluxDBClient(InfluxDBClient):
     """The :class:`~.InfluxDBClient` object holds information necessary to
     connect to InfluxDB. Requests can be made to InfluxDB directly through
     the client.
