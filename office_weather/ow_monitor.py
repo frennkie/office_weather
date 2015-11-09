@@ -160,6 +160,28 @@ def main():
 
     validate_db(client)
 
+    acm = AirControlMini()
+
+    stamp = now()
+
+    for dct in acm.get_values():
+        #co2 = dct['co2']
+        #tmp = dct['tmp']
+        co2 = dct[0]
+        tmp = dct[1]
+
+        print("CO2: %4i TMP: %3.1f" % (co2, tmp))
+
+        if now() - stamp > 5:
+            print(">>>")
+
+            dataset = create_dataset(config, tmp=rand_tmp, co2=rand_co2)
+            client.write_points(dataset)
+
+            stamp = now()
+
+    """
+
     key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
     fp = open(sys.argv[1], "a+b",  0)
     HIDIOCSFEATURE_9 = 0xC0094806
@@ -191,6 +213,7 @@ def main():
                     client.write_points(dataset)
 
                     stamp = now()
+    """
 
 if __name__ == "__main__":
     main()
