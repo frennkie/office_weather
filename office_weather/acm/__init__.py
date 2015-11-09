@@ -25,8 +25,10 @@ class AirControlMini(object):
         values = {}
 
         while True:
-            dct = {}
             lst = list()
+
+            print("DEBUG: " + str(data)
+
             data = list(ord(e) for e in self.fp.read(8))
             decrypted = self.decrypt(self.key, data)
             if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:
@@ -42,13 +44,9 @@ class AirControlMini(object):
 
                     print("CO2: %4i TMP: %3.1f" % (co2, tmp))
 
-                    dct['co2'] = co2
-                    dct['tmp'] = tmp
-
                     lst.append(co2)
                     lst.append(tmp)
 
-                    #yield dct
                     yield lst
 
     def decrypt(self, key, data):
