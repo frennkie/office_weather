@@ -24,7 +24,7 @@ class AirControlMini(object):
             self.device = "/dev/co2mini0"
 
         try:
-             check_device()
+            self.check_device()
         except Exception as err:
             print(err)
 
