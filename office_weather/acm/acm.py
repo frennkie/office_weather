@@ -33,6 +33,9 @@ class AirControlMini(object):
         """actually open connection to the sensor"""
 
         try:
+            devnull = open("/dev/null", "w")
+            subprocess.call(["sudo", "/bin/chmod", "a+rw", self.device], stderr=devnull)
+
             self.fp = open(self.device, "a+b",  0)
             HIDIOCSFEATURE_9 = 0xC0094806
             fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)

@@ -60,14 +60,8 @@ def main():
         # if script is already running just exit silently
         sys.exit(0)
 
-    # not implemented yet:
-    # my_sensor = AirControlMini.auto_detect_sensor()
-    # acm = AirControlMini(device=my_sensor)
     acm = AirControlMini()
     acm.connect()
-
-    devnull = open("/dev/null", "w")
-    subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"], stderr=devnull)
 
     try:
         config = get_config(config_file=sys.argv[2])
