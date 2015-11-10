@@ -33,7 +33,7 @@ class AirControlMini(object):
             HIDIOCSFEATURE_9 = 0xC0094806
             fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)
             return True
-        except Error as err:
+        except Exception as err:
             raise(err)
 
     @classmethod
