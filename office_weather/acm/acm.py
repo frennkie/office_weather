@@ -5,6 +5,7 @@ import time
 import random
 import subprocess
 import os
+import sys
 
 
 class AirControlMini(object):
@@ -26,7 +27,7 @@ class AirControlMini(object):
         try:
             self.check_device()
         except Exception as err:
-            print(err)
+            raise(err)
 
         self.key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
         self.set_report = "\x00" + "".join(chr(e) for e in self.key)
@@ -52,7 +53,8 @@ class AirControlMini(object):
             fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)
             return True
         except Exception as err:
-            raise(err)
+            print(err)
+            sys.exit(1)
 
     @classmethod
     def auto_detect_sensor(cls):
