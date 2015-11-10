@@ -23,12 +23,22 @@ class AirControlMini(object):
         else:
             self.device = "/dev/co2mini0"
 
-        if not os.path.exists(self.device):
-            raise Exception("Could not find device: " + str(self.device) +
-                  "\nMake sure it is connected (and check udev rules).")
+        try:
+             check_device()
+        except Exception as err:
+            print(err)
 
         self.key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
         self.set_report = "\x00" + "".join(chr(e) for e in self.key)
+
+    def check_device(self):
+        """check device (path)"""
+        if os.path.exists(self.device):
+            return True
+        else:
+            raise Exception("Could not find device: " + str(self.device) +
+                "\nMake sure it is connected (and check udev rules).")
+
 
     def connect(self):
         """actually open connection to the sensor"""
