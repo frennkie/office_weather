@@ -23,7 +23,7 @@ class AirControlMini(object):
             self.device = "/dev/co2mini0"
 
         if not os.path.exists(self.device):
-            raise("Could not find device: " + str(self.device) +
+            raise Exception("Could not find device: " + str(self.device) +
                   "\nMake sure it is connected (and check udev rules).")
 
         self.key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
