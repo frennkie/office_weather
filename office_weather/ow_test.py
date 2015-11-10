@@ -14,7 +14,6 @@ https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/l
 from __future__ import print_function
 
 import socket
-import subprocess
 import sys
 import time
 

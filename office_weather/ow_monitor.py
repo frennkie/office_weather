@@ -17,7 +17,6 @@ import sys
 import time
 import yaml
 import socket
-import subprocess
 
 from acm import AirControlMini
 from my_influxdb import MyInfluxDBClient
