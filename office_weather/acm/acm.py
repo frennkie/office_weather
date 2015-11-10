@@ -12,20 +12,29 @@ class AirControlMini(object):
         """
 
         Args:
-            device (str): device path, defaults to "/dev/hidraw0"
+            device (str): device path, defaults to "/dev/co2mini0"
 
         """
 
         if device:
             self.device = device
         else:
-            self.device = "/dev/hidraw0"
+            #self.device = "/dev/hidraw0"
+            self.device = "/dev/co2mini0"
 
         self.key = [0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96]
-        self.fp = open(self.device, "a+b",  0)
-        HIDIOCSFEATURE_9 = 0xC0094806
         self.set_report = "\x00" + "".join(chr(e) for e in self.key)
-        fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)
+
+    def connect(self):
+        """actually open connection to the sensor"""
+
+        try:
+            self.fp = open(self.device, "a+b",  0)
+            HIDIOCSFEATURE_9 = 0xC0094806
+            fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)
+            return True
+        except Error as err:
+            raise(err)
 
     @classmethod
     def auto_detect_sensor(cls):

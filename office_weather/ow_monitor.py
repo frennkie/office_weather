@@ -64,6 +64,7 @@ def main():
     # my_sensor = AirControlMini.auto_detect_sensor()
     # acm = AirControlMini(device=my_sensor)
     acm = AirControlMini()
+    acm.connect()
 
     devnull = open("/dev/null", "w")
     subprocess.call(["sudo", "/bin/chmod", "a+rw", "/dev/hidraw0"], stderr=devnull)
