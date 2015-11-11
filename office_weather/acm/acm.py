@@ -22,7 +22,7 @@ class AirControlMini(object):
         if device:
             self.device = device
         else:
-            self.device = "/dev/co2mini0"
+            self.device = "/dev/co2mini1"
 
         try:
             self.check_device()
