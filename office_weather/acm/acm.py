@@ -64,7 +64,7 @@ class AirControlMini(object):
         """automatically detect the device path of the sensor"""
         dev_list = glob.glob("/dev/co2mini*")
 
-        if len(dev_list) == 1 :
+        if len(dev_list) == 0:
             raise Exception("Did not find any matching devices!")
         elif len(dev_list) >= 2:
             raise Exception("Fund more than one matching device!")
