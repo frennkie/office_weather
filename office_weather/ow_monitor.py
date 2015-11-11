@@ -63,7 +63,7 @@ def main():
     acm.connect()
 
     try:
-        config = get_config(config_file=sys.argv[2])
+        config = get_config(config_file=sys.argv[1])
     except IndexError:
         config = get_config()
 

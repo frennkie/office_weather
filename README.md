@@ -24,7 +24,7 @@ python-pygame
 python-pip
 
 
-1) [Librato](https://www.librato.com) account for posting the data to.
+1) influxdb (I'm not using librato.. but you could if you want to:) [Librato](https://www.librato.com) account for posting the data to.
 
 2) download [Raspbian](https://www.raspberrypi.org/downloads/) and [install it on the microSD](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used [this version](https://github.com/wooga/office_weather/blob/0da94b4255494ecbcf993ec592988503c6c72629/.gitignore#L2) of raspbian.
 
@@ -32,14 +32,19 @@ python-pip
 
 0) Boot the raspberry with the raspbian. You'll need a USB-keyboard, monitor and ethernet for this initial boot. After overcoming the initial configuration screen, you can login into the box using ssh.
 
-1) install python libs
+1) get this repo
+```
+git clone https://github.com/frennkie/office_weather.git
+```
+
+2) install python libs
 ```
 sudo apt-get install python-pip python-pygame
 sudo pip install -U pip
 sudo pip install -U -r requirements.txt
 ```
 
-2) create copy of example config  `cp config.yaml.sample config.yaml`
+3) create copy of example config  `cp config.yaml.sample config.yaml`
 ```
 # influxdb
 host: influx.example.com
@@ -53,38 +58,43 @@ sensor: raspberry
 office: main-floor
 ```
 
-
-3) fix socket permissions
+4) get udev rules in place
 ```
-sudo chmod a+rw /dev/hidraw0
-```
-
-4) run the script
-```
-./ow_monitor.py /dev/hidraw0
+sudo cp 90-co2mini.rules /etc/udev/rules.d/
 ```
 
-5) run on startup
+5) setup sudo
+pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini0
+pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini1
+pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini2
+pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini3
+```
 
-To get everything working on startup, need to add 2 crontabs, one for root
-and the other for the pi user:
+TODO check whether "/dev/co2mini*" works
 
-Roots:
+**optionally**: to be able to change also to play audio to 3,5mm instead of HDMI:
+```
+pi ALL=(ALL) NOPASSWD: /usr/bin/amixer cset numid=3 1
+```
+
+6) run the script
+```
+python office_weather/ow_monitor.py
+```
+
+7) run on startup
+
+To get everything working on startup you need to add a cronjob for the pi user:
+
+pi user:
 
 ```
 SHELL=/bin/bash
-* * * * * if [ $(find /dev/hidraw0 -perm a=rw | wc -l) -eq 0 ] ; then chmod a+rw /dev/hidraw0 ; fi
-```
-
-Pi:
-
-```
-SHELL=/bin/bash
-* * * * * /usr/bin/python /home/pi/ow_monitor.py /dev/hidraw0 [ **optional:** /home/pi/my_config.yaml ]  > /dev/null 2>&1
+* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the
-monitor.py script - /home/pi in the example) for the librato credentials.
+ow_monitor.py script - /home/pi/office_weather/office_weather in the example) for the influxdb credentials.
 You can optionally override this by passing a custom configuration file path as a second parameter.
 
 # credits
