@@ -87,7 +87,10 @@ To get everything working on startup you need to add a cronjob for the pi user:
 pi user:
 ```
 SHELL=/bin/bash
-* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
+MAILTO="you@example.com"
+
+# run script every minute. This will use config: /home/pi/office_weather/office_weather/config.yaml
+* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the
