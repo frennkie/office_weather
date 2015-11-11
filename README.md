@@ -73,7 +73,7 @@ pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini3
 
 TODO check whether `/dev/co2mini*` works
 
-**optionally**: to be able to change also to play audio to 3,5mm instead of HDMI:
+**optionally**: to also be able to change audio output to play to 3,5mm instead of HDMI:
 ```
 pi ALL=(ALL) NOPASSWD: /usr/bin/amixer cset numid=3 1
 ```
@@ -91,7 +91,7 @@ pi user:
 
 ```
 SHELL=/bin/bash
- * * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
+\* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the
