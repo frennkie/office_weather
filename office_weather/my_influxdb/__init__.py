@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from .influxdb_proxies import MyInfluxDBClient
+from .my_influxdb import MyInfluxDBClient
 

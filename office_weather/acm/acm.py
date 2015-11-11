@@ -3,7 +3,6 @@
 import fcntl
 import time
 import random
-import subprocess
 import os
 import sys
 import glob
@@ -12,20 +11,9 @@ import glob
 class AirControlMini(object):
     """AirControlMini (acm) class"""
 
-    def __init__(self, device=None):
-        """
-
-        Args:
-            device (str): device path, defaults to (trying) auto_dectect
-                Please be aware that auto_detect requires the udev rules to be
-                in place as it looks for /dev/co2mini*.
-
-        """
-
-        if device:
-            self.device = device
-        else:
-            self.device = AirControlMini.auto_detect_sensor()
+    def __init__(self, device):
+        """set up"""
+        self.device = device
 
         try:
             self.check_device()
@@ -47,11 +35,7 @@ class AirControlMini(object):
 
     def connect(self):
         """actually open connection to the sensor"""
-
         try:
-            devnull = open("/dev/null", "w")
-            subprocess.call(["sudo", "/bin/chmod", "a+rw", self.device], stderr=devnull)
-
             self.fp = open(self.device, "a+b",  0)
             HIDIOCSFEATURE_9 = 0xC0094806
             fcntl.ioctl(self.fp, HIDIOCSFEATURE_9, self.set_report)
@@ -88,14 +72,11 @@ class AirControlMini(object):
             tuple (co2, tmp): The next tuple of valid sensor values
 
         """
-
         values = {}
 
         while True:
             lst = list()
-
             data = list(ord(e) for e in self.fp.read(8))
-            print("DEBUG: " + str(data))
 
             decrypted = self._decrypt(self.key, data)
             if decrypted[4] != 0x0d or (sum(decrypted[:3]) & 0xff) != decrypted[3]:

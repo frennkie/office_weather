@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Name
-Author
-Created
+Name        ow_test.py
+Author      Robert Habermann <mail@rhab.de>
+Created     2015-11-08
 
 based on
-
+https://github.com/wooga/office_weather
 
 based on code by henryk ploetz
 https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/log/17909-all-your-base-are-belong-to-us
@@ -17,10 +17,10 @@ import sys
 import time
 import yaml
 import socket
+import subprocess
 
 from acm import AirControlMini
 from my_influxdb import MyInfluxDBClient
-
 
 DATABASE_NAME = "climate"
 
@@ -59,7 +59,12 @@ def main():
         # if script is already running just exit silently
         sys.exit(0)
 
-    acm = AirControlMini()
+    device = AirControlMini.auto_detect_sensor()
+
+    devnull = open("/dev/null", "w")
+    subprocess.call(["sudo", "/bin/chmod", "a+rw", device], stderr=devnull)
+
+    acm = AirControlMini(device=device)
     acm.connect()
 
     try:
@@ -94,10 +99,8 @@ def main():
 
         if now() - stamp > 5:
             print(">>>")
-
             dataset = client.create_dataset(config, tmp=cur_tmp, co2=cur_co2)
             client.write_points(dataset)
-
             stamp = now()
 
 if __name__ == "__main__":

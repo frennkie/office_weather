@@ -57,6 +57,7 @@ office: main-floor
 4) get udev rules in place
 ```
 sudo cp 90-co2mini.rules /etc/udev/rules.d/
+sudo reboot
 ```
 
 5) setup sudo
