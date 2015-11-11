@@ -6,6 +6,7 @@ import random
 import subprocess
 import os
 import sys
+import glob
 
 
 class AirControlMini(object):
@@ -22,7 +23,7 @@ class AirControlMini(object):
         if device:
             self.device = device
         else:
-            self.device = "/dev/co2mini0"
+            self.device = AirControlMini.auto_detect_sensor()
 
         try:
             self.check_device()
@@ -61,7 +62,11 @@ class AirControlMini(object):
         """automatically detect the device path of the sensor"""
         """possibly raises an exception if unable to detect a sensor"""
         # TODO (frennkie): implement this
-        return "/dev/hidraw0"
+        dev_list = glob.glob("/dev/co2mini*")
+        if len(dev_list) != 1 :
+            raise Exception("did not find exactly one matching device!")
+        print("Found: " + str(dev_list[0])
+        return dev_list[0]
 
     @staticmethod
     def get_fake_values():
