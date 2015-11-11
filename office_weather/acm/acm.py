@@ -16,7 +16,9 @@ class AirControlMini(object):
         """
 
         Args:
-            device (str): device path, defaults to "/dev/co2mini0"
+            device (str): device path, defaults to (trying) auto_dectect
+                Please be aware that auto_detect requires the udev rules to be
+                in place as it looks for /dev/co2mini*.
 
         """
 
@@ -60,11 +62,13 @@ class AirControlMini(object):
     @classmethod
     def auto_detect_sensor(cls):
         """automatically detect the device path of the sensor"""
-        """possibly raises an exception if unable to detect a sensor"""
-        # TODO (frennkie): implement this
         dev_list = glob.glob("/dev/co2mini*")
-        if len(dev_list) != 1 :
-            raise Exception("did not find exactly one matching device!")
+
+        if len(dev_list) == 1 :
+            raise Exception("Did not find any matching devices!")
+        elif len(dev_list) >= 2:
+            raise Exception("Fund more than one matching device!")
+
         print("Found: " + str(dev_list[0]))
         return dev_list[0]
 
