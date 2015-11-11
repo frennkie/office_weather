@@ -91,7 +91,7 @@ pi user:
 
 ```
 SHELL=/bin/bash
-\* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
+* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the
