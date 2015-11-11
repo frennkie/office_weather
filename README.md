@@ -64,13 +64,14 @@ sudo cp 90-co2mini.rules /etc/udev/rules.d/
 ```
 
 5) setup sudo
+```
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini0
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini1
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini2
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini3
 ```
 
-TODO check whether "/dev/co2mini*" works
+TODO check whether `/dev/co2mini*` works
 
 **optionally**: to be able to change also to play audio to 3,5mm instead of HDMI:
 ```
@@ -90,7 +91,7 @@ pi user:
 
 ```
 SHELL=/bin/bash
-* * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
+ * * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
 ```
 
 The script will default to using "config.yaml" (residing in the same directory as the
