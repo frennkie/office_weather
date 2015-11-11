@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import glob
 
 def get_values():
     """generator"""
@@ -80,12 +81,19 @@ class ColoredShape(Shape):
 def main():
     """main"""
 
+    print(glob.glob('/dev/sd[ab]*'))
+
+
+    """
+
     my_shape = Shape(shapename="my_shape1")
     print(my_shape.shapename)
 
     my_c_shape = ColoredShape(shapename="my_shape1", color="red")
     print(my_c_shape.shapename)
     print(my_c_shape.color)
+
+    """
 
     """
     print("Start")
