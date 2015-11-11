@@ -65,7 +65,7 @@ class AirControlMini(object):
         dev_list = glob.glob("/dev/co2mini*")
         if len(dev_list) != 1 :
             raise Exception("did not find exactly one matching device!")
-        print("Found: " + str(dev_list[0])
+        print("Found: " + str(dev_list[0]))
         return dev_list[0]
 
     @staticmethod
