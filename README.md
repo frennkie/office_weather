@@ -19,11 +19,6 @@ vary in temperature and Co2 across the floors.
 ## software
 
 
-python-pygame
-
-python-pip
-
-
 1) influxdb (I'm not using librato.. but you could if you want to:) [Librato](https://www.librato.com) account for posting the data to.
 
 2) download [Raspbian](https://www.raspberrypi.org/downloads/) and [install it on the microSD](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used [this version](https://github.com/wooga/office_weather/blob/0da94b4255494ecbcf993ec592988503c6c72629/.gitignore#L2) of raspbian.
@@ -35,6 +30,7 @@ python-pip
 1) get this repo
 ```
 git clone https://github.com/frennkie/office_weather.git
+cd office_weather
 ```
 
 2) install python libs
@@ -44,7 +40,7 @@ sudo pip install -U pip
 sudo pip install -U -r requirements.txt
 ```
 
-3) create copy of example config  `cp config.yaml.sample config.yaml`
+3) create copy of example config  `cp office_weather/config.yaml.sample office_weather/config.yaml`
 ```
 # influxdb
 host: influx.example.com
@@ -65,13 +61,15 @@ sudo cp 90-co2mini.rules /etc/udev/rules.d/
 
 5) setup sudo
 ```
+sudo visudo
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini0
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini1
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini2
 pi ALL=(ALL) NOPASSWD: /bin/chmod a+rw /dev/co2mini3
 ```
 
-TODO check whether `/dev/co2mini*` works
+**TODO**: check whether `/dev/co2mini*` would work in sudo too
+
 
 **optionally**: to also be able to change audio output to play to 3,5mm instead of HDMI:
 ```
@@ -84,11 +82,9 @@ python office_weather/ow_monitor.py
 ```
 
 7) run on startup
-
 To get everything working on startup you need to add a cronjob for the pi user:
 
 pi user:
-
 ```
 SHELL=/bin/bash
 * * * * * /usr/bin/python /home/pi/office_weather/office_weather/ow_monitor.py [ **optional:** /home/pi/my_config.yaml ] > /dev/null 2>&1
