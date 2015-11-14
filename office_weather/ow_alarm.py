@@ -8,8 +8,8 @@ import os
 import sys
 import yaml
 
-from office_weather import audio
-from office_weather.my_influxdb import MyInfluxDBClient
+import audio
+from my_influxdb import MyInfluxDBClient
 
 
 DATABASE_NAME = "climate"

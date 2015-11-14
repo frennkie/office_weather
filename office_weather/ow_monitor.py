@@ -21,8 +21,8 @@ import yaml
 import socket
 import subprocess
 
-from office_weather.acm import AirControlMini
-from office_weather.my_influxdb import MyInfluxDBClient
+from acm import AirControlMini
+from my_influxdb import MyInfluxDBClient
 
 DATABASE_NAME = "climate"
 
@@ -95,6 +95,11 @@ def main():
 
     client.validate_db()
 
+    tags = {
+        "office": config["office"],
+        "sensor": config["sensor"]
+    }
+
     stamp = now()
 
     for cur_co2, cur_tmp in acm.get_values():
@@ -102,7 +107,7 @@ def main():
 
         if now() - stamp > 5:
             print(">>>")
-            dataset = client.create_dataset(config, tmp=cur_tmp, co2=cur_co2)
+            dataset = client.create_dataset(tags, tmp=cur_tmp, co2=cur_co2)
             client.write_points(dataset)
             stamp = now()
 

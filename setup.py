@@ -12,6 +12,7 @@ setup(
     name='office_weather',
     version='0.1.0',
     description="Office weather monitor",
+    packages=['office_weather'],
     long_description=readme,
     url='https://github.com/frennkie/office_weather',
     license='MIT License',

@@ -1,2 +1,2 @@
-influxdb==2.9.3
+influxdb==2.10.0
 PyYAML==3.11

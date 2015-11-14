@@ -105,3 +105,7 @@ based on code by [henryk ploetz](https://hackaday.io/project/5301-reverse-engine
 # license
 
 [MIT](http://opensource.org/licenses/MIT)
+
+# contribute
+pylint --rcfile=../pylint.rc --init-hook='import sys; sys.path.append("/home/robbie/work/office_weather/office_weather")' ow_test.py
+pylint --rcfile=pylint.rc --init-hook='import sys; sys.path.append("/home/robbie/work/office_weather/office_weather")' office_weather/ow_test.py

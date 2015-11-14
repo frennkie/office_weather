@@ -21,8 +21,8 @@ import yaml
 import socket
 import subprocess
 
-from office_weather.acm import AirControlMini
-from office_weather.my_influxdb import MyInfluxDBClient
+from acm import AirControlMini
+from my_influxdb import MyInfluxDBClient
 
 DATABASE_NAME = "climate"
 
@@ -46,7 +46,7 @@ def get_config(config_file=None):
 
 
 def now():
-    """now as int"""
+    """now as an int"""
     return int(time.time())
 
 
@@ -62,13 +62,15 @@ def main():
         # if script is already running just exit silently
         sys.exit(0)
 
+    """
     device = AirControlMini.auto_detect_sensor()
 
     devnull = open("/dev/null", "w")
     subprocess.call(["sudo", "/bin/chmod", "a+rw", device], stderr=devnull)
+    """
 
-    acm = AirControlMini(device=device)
-    acm.connect()
+    acm = AirControlMini(device="/dev/null")
+    #acm.connect()
 
     try:
         config = get_config(config_file=sys.argv[1])
@@ -95,6 +97,11 @@ def main():
 
     client.validate_db()
 
+    tags = {
+        "office": config["office"],
+        "sensor": config["sensor"]
+    }
+
     stamp = now()
 
     for cur_co2, cur_tmp in acm.get_fake_values():
@@ -102,8 +109,8 @@ def main():
 
         if now() - stamp > 5:
             print(">>>")
-            #dataset = create_dataset(config, tmp=cur_tmp, co2=cur_co2)
-            #client.write_points(dataset)
+            dataset = client.create_dataset(tags, fake_tmp=cur_tmp, fake_co2=cur_co2)
+            client.write_points(dataset)
             stamp = now()
 
 if __name__ == "__main__":
