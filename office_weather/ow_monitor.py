@@ -12,6 +12,8 @@ https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/l
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 import sys
 import time
@@ -19,8 +21,8 @@ import yaml
 import socket
 import subprocess
 
-from acm import AirControlMini
-from my_influxdb import MyInfluxDBClient
+from office_weather.acm import AirControlMini
+from office_weather.my_influxdb import MyInfluxDBClient
 
 DATABASE_NAME = "climate"
 
@@ -44,6 +46,7 @@ def get_config(config_file=None):
 
 
 def now():
+    """now as an int"""
     return int(time.time())
 
 
@@ -52,9 +55,9 @@ def main():
 
     # use lock on socket to indicate that script is already running
     try:
-        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         ## Create an abstract socket, by prefixing it with null.
-        s.bind('\0ow_monitor_lock')
+        lock_socket.bind('\0ow_monitor_lock')
     except socket.error:
         # if script is already running just exit silently
         sys.exit(0)
@@ -75,8 +78,8 @@ def main():
     if config["use_proxy"]:
         print("using proxy")
         proxies = {
-                   "http": config["http_proxy_config"],
-                   "https": config["https_proxy_config"]
+            "http": config["http_proxy_config"],
+            "https": config["https_proxy_config"]
         }
     else:
         proxies = None

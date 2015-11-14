@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
+"""office_weather alarm"""
 
 from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 import sys
-
-import pygame
-import subprocess
-import random
-
 import yaml
 
-import audio
-from my_influxdb import MyInfluxDBClient
+from office_weather import audio
+from office_weather.my_influxdb import MyInfluxDBClient
 
 
 DATABASE_NAME = "climate"
@@ -42,8 +40,8 @@ def main():
 
     if config["use_proxy"]:
         proxies = {
-                "http": config["http_proxy_config"],
-                "https": config["https_proxy_config"]
+            "http": config["http_proxy_config"],
+            "https": config["https_proxy_config"]
         }
     else:
         proxies = None
