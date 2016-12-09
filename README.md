@@ -35,7 +35,7 @@ cd office_weather
 
 2) install python libs
 ```
-sudo apt-get install python-pip python-pygame
+sudo apt-get install python-pip python-pygame libyaml-dev libpython2.7-dev
 sudo pip install -U pip
 sudo pip install -U -r requirements.txt
 ```
