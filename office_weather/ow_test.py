@@ -22,10 +22,34 @@ import socket
 import subprocess
 
 from acm import AirControlMini
-from my_influxdb import MyInfluxDBClient
+from nfluxdb import InfluxDBClient
 
 DATABASE_NAME = "climate"
 
+def create_dataset(tags, **kwargs):
+    """create and return a json dataset ready to sent to API as POST
+
+    Args:
+        tags (dict): A dict of tags that will be associated with the data points
+        **kwargs: keyword arguments containing the values will be put into the db
+
+    Returns:
+        dataset in json format that should then be sent as the POST body
+    """
+
+    json_body = list()
+
+    for key in kwargs:
+        dct = {
+            "measurement": key,
+            "tags": tags,
+            "fields": {
+                "value": kwargs[key]
+            }
+        }
+        json_body.append(dct)
+
+    return json_body
 
 def get_config(config_file=None):
     """
@@ -86,16 +110,16 @@ def main():
     else:
         proxies = None
 
-    client = MyInfluxDBClient(host=config["host"],
-                              port=config["port"],
-                              username=config["username"],
-                              password=config["password"],
-                              database=DATABASE_NAME,
-                              ssl=config["ssl"],
-                              proxies=proxies,
-                              verify_ssl=config["verify_ssl"])
+    client = InfluxDBClient(host=config["host"],
+                            port=config["port"],
+                            username=config["username"],
+                            password=config["password"],
+                            database=DATABASE_NAME,
+                            ssl=config["ssl"],
+                            proxies=proxies,
+                            verify_ssl=config["verify_ssl"])
 
-    client.validate_db()
+    client.create_database(DATABASE_NAME)
 
     tags = {
         "office": config["office"],
