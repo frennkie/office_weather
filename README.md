@@ -146,7 +146,7 @@ CREATE CONTINUOUS QUERY cq_co2_1h_for_1y ON climate BEGIN SELECT mean(value) AS 
 CREATE CONTINUOUS QUERY cq_tmp_1h_for_1y ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.y.tmp FROM climate.autogen.tmp GROUP BY time(1h), * END
 ```
 
-In your Influxdb create a new measurement called "forever" and insert the retention policy configuration. This will be used for Grafana.
+In your Influxdb create a new retention policy called "forever" and insert the settings that will be used in Grafana.
 
 ```
 CREATE RETENTION POLICY "forever" ON testing DURATION INF REPLICATION 1
