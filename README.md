@@ -105,6 +105,8 @@ In order to save on storage and have a much faster UI experience the following s
 aggregation levels over time. The full amount of data (points) is kept only for a limited time - but the aggregation (which takes
 a lot less data and is queried more quickly) can be kept for a very long timeframe.
 
+See also: https://community.icinga.com/t/retention-policies-and-continuous-queries-made-simple/117 and https://github.com/grafana/grafana/issues/4262
+
 This uses four different "datastores":
 
 * autogen: All data is kept for ~3 month
