@@ -112,7 +112,7 @@ This uses four different "datastores":
 * autogen: All data is kept for ~3 month
 * d: Data is aggregated over 1 minutes intervals and kept ~1 day
 * m: Data is aggregated over 5 minutes intervals and kept ~1 month
-* y: Data is aggregated over 1 hour intervals and kept ~4 years (<- can be changed)
+* y: Data is aggregated over 1 hour intervals and kept ~4 years (1500 days)
 
 ## Influxdb
 
@@ -128,7 +128,7 @@ Create additional retention policies (Day, Month, Years)
 ```
 CREATE RETENTION POLICY "d" ON "climate" DURATION 24h1m REPLICATION 1
 CREATE RETENTION POLICY "m" ON "climate" DURATION 32d REPLICATION 1
-CREATE RETENTION POLICY "y" ON "testing" DURATION 1500d REPLICATION 1
+CREATE RETENTION POLICY "y" ON "climate" DURATION 1500d REPLICATION 1
 ```
 
 Then create continuous queries (CQ) that will take the data from the `autogen` and insert an aggregate into the according RP.
