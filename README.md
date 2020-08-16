@@ -114,7 +114,7 @@ This uses four different "datastores":
 * m: Data is aggregated over 5 minutes intervals and kept ~1 month
 * y: Data is aggregated over 1 hour intervals and kept ~4 years (1500 days)
 
-There is (at least) one downside: Grafana Alerts can not use a variable (e.g. the retention policy selector "$rp").
+There is (at least) one downside: Grafana Alerts can not use variables (e.g. the retention policy selector "$rp").
 
 ## Influxdb
 
