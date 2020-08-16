@@ -131,9 +131,9 @@ CREATE RETENTION POLICY "m" ON "climate" DURATION 32d REPLICATION 1
 CREATE RETENTION POLICY "y" ON "climate" DURATION 1500d REPLICATION 1
 ```
 
-Then create continuous queries (CQ) that will take the data from the `autogen` and insert an aggregate into the according RP.
+Then create continuous queries (CQ) that will take the data from the `autogen` and insert an aggregate into the corresponding RP.
 
-The follow CQ This uses extra MIN and MAX fields to retain the original values.
+The follow CQ uses extra MIN and MAX fields to retain the original values.
 
 ```
 CREATE CONTINUOUS QUERY cq_co2_1m_for_ag ON climate BEGIN SELECT last(value) AS value, max(value) AS max, min(value) AS min INTO climate.autogen.co2 FROM climate.autogen.co2 GROUP BY time(1m), * END
