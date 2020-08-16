@@ -150,10 +150,10 @@ In your Influxdb create a new measurement called "forever" and insert the retent
 
 ```
 CREATE RETENTION POLICY "forever" ON testing DURATION INF REPLICATION 1
-INSERT INTO forever rp_config,idx=1 rp="autogen",start=0i,end=3600000i -9223372036854775806
-INSERT INTO forever rp_config,idx=2 rp="d",start=3600000i,end=86400000i -9223372036854775805
-INSERT INTO forever rp_config,idx=3 rp="m",start=86400000i,end=2592000000i -9223372036854775803
-INSERT INTO forever rp_config,idx=4 rp="y",start=2592000000i,end=3110400000000i -9223372036854775802
+INSERT INTO forever rp_config,idx=1 rp="autogen",start=0i,end=3600000i -9223372036854775790
+INSERT INTO forever rp_config,idx=2 rp="d",start=3600000i,end=86400000i -9223372036854775780
+INSERT INTO forever rp_config,idx=3 rp="m",start=86400000i,end=2592000000i -9223372036854775770
+INSERT INTO forever rp_config,idx=4 rp="y",start=2592000000i,end=3110400000000i -9223372036854775760
 
 select * from "forever"."rp_config"
 ```
