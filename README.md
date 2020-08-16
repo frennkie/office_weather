@@ -165,12 +165,11 @@ select * from "forever"."rp_config"
 
 Dashboard Settings -> Variables -> New
 
-Name: rp
-Type: Query
-Label: Retention Policy (auto)
-
-Refresh: On Time Range Change
-Query: `select rp from forever.rp_config where $__to - $__from > "start" and $__to - $__from <= "end"` 
+* Name: rp
+* Type: Query
+* Label: Retention Policy (auto)
+* Refresh: On Time Range Change
+* Query: `select rp from forever.rp_config where $__to - $__from > "start" and $__to - $__from <= "end"` 
 
 Use **$rp** in the queries: `SELECT mean("value") FROM "$rp"."tmp" ...`
 
