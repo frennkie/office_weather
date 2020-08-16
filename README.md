@@ -98,6 +98,79 @@ The script will default to using "config.yaml" (residing in the same directory a
 ow_monitor.py script - /home/pi/office_weather/office_weather in the example) for the influxdb credentials.
 You can optionally override this by passing a custom configuration file path as a second parameter.
 
+
+# Dashboarding
+
+In order to save on storage and have a much faster UI experience the following setup makes sure that data is stored at different 
+aggregation levels over time. The full amount of data (points) is kept only for a limited time - but the aggregation (which takes
+a lot less data and is queried more quickly) can be kept for a very long timeframe.
+
+This uses four different "datastores":
+
+* autogen: All data is kept for ~3 month
+* d: Data is aggregated over 1 minutes intervals and kept ~1 day
+* m: Data is aggregated over 5 minutes intervals and kept ~1 month
+* y: Data is aggregated over 1 hour intervals and kept ~4 years (<- can be changed)
+
+## Influxdb
+
+
+Change the default retention policy (RP) which is called **autogen**
+
+```
+ALTER RETENTION POLICY "autogen" ON "climate" DURATION 99d REPLICATION 1
+```
+
+Create additional retention policies (Day, Month, Years)
+
+```
+CREATE RETENTION POLICY "d" ON "climate" DURATION 24h1m REPLICATION 1
+CREATE RETENTION POLICY "m" ON "climate" DURATION 32d REPLICATION 1
+CREATE RETENTION POLICY "y" ON "testing" DURATION 1500d REPLICATION 1
+```
+
+Then create continuous queries (CQ) that will take the data from the `autogen` and insert an aggregate into the according RP.
+
+The follow CQ This uses extra MIN and MAX fields to retain the original values.
+
+```
+CREATE CONTINUOUS QUERY cq_co2_1m_for_ag ON climate BEGIN SELECT last(value) AS value, max(value) AS max, min(value) AS min INTO climate.autogen.co2 FROM climate.autogen.co2 GROUP BY time(1m), * END
+CREATE CONTINUOUS QUERY cq_tmp_1m_for_ag ON climate BEGIN SELECT last(value) AS value, max(value) AS max, min(value) AS min INTO climate.autogen.tmp FROM climate.autogen.tmp GROUP BY time(1m), * END
+CREATE CONTINUOUS QUERY cq_co2_1m_for_1d ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.d.co2 FROM climate.autogen.co2 GROUP BY time(1m), * END
+CREATE CONTINUOUS QUERY cq_tmp_1m_for_1d ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.d.tmp FROM climate.autogen.tmp GROUP BY time(1m), * END-
+CREATE CONTINUOUS QUERY cq_co2_5m_for_1m ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.m.co2 FROM climate.autogen.co2 GROUP BY time(5m), * END
+CREATE CONTINUOUS QUERY cq_tmp_5m_for_1m ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.m.tmp FROM climate.autogen.tmp GROUP BY time(5m), * END
+CREATE CONTINUOUS QUERY cq_co2_1h_for_1y ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.y.co2 FROM climate.autogen.co2 GROUP BY time(1h), * END
+CREATE CONTINUOUS QUERY cq_tmp_1h_for_1y ON climate BEGIN SELECT mean(value) AS value, max(value) AS max, min(value) AS min INTO climate.y.tmp FROM climate.autogen.tmp GROUP BY time(1h), * END
+```
+
+In your Influxdb create a new measurement called "forever" and insert the retention policy configuration. This will be used for Grafana.
+
+```
+CREATE RETENTION POLICY "forever" ON testing DURATION INF REPLICATION 1
+INSERT INTO forever rp_config,idx=1 rp="autogen",start=0i,end=3600000i -9223372036854775804
+INSERT INTO forever rp_config,idx=2 rp="d",start=3600000i,end=86400000i -9223372036854775803
+INSERT INTO forever rp_config,idx=3 rp="m",start=86400000i,end=2592000000i -9223372036854775802
+INSERT INTO forever rp_config,idx=4 rp="y",start=2592000000i,end=3110400000000i -9223372036854775801
+
+select * from "forever"."rp_config"
+```
+
+
+## Grafana
+
+Dashboard Settings -> Variables -> New
+
+Name: rp
+Type: Query
+Label: Retention Policy (auto)
+
+Refresh: On Time Range Change
+Query: `select rp from forever.rp_config where $__to - $__from > "start" and $__to - $__from <= "end"` 
+
+Use **$rp** in the queries: `SELECT mean("value") FROM "$rp"."tmp" ...`
+
+
 # credits
 
 based on code by [henryk ploetz](https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/log/17909-all-your-base-are-belong-to-us)
